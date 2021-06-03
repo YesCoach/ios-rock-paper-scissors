@@ -71,7 +71,7 @@ struct RockScissorsPaper {
         print("가위(1), 바위(2), 보(3)! <종료 : 0> :", terminator: " ")
         let userInputArray: [Int] = [0, 1, 2, 3]
         guard let userInput = (readLine().flatMap{ Int($0) }), userInputArray.contains(userInput) else {
-            print("잘못된 입력입니다. 다시 입력해주세요")
+            print("잘못된 입력입니다. 다시 시도해주세요.")
             
             return choiceUserHand()
         }
@@ -101,8 +101,7 @@ struct RockScissorsPaper {
             }
             firstResult = compare(userHand: userHand, computerHand: computerHand())
         } while firstResult == Result.draw
-        let gameTurn = (firstResult == .win) ? Turn.userTurn : .computerTurn
-        return gameTurn
+        return (firstResult == .win) ? Turn.userTurn : .computerTurn
     }
 }
 
@@ -113,7 +112,7 @@ struct SecondGame {
         print("[\(gameTurn)턴] 묵(1), 찌(2), 빠(3)! <종료 : 0> :", terminator: " ")
         let userInputArray: [Int] = [0, 1, 2, 3]
         guard let userInput = (readLine().flatMap{ Int($0) }), userInputArray.contains(userInput) else {
-            print("잘못된 입력입니다. 다시 입력해주세요")
+            print("잘못된 입력입니다. 다시 시도해주세요.")
             gameTurn = Turn.convert(gameTurn)
             return choiceUserHand()
         }
@@ -137,32 +136,41 @@ struct SecondGame {
         }
     }
     
-    mutating func compare(userHand: Hand, computerHand: Hand){
+    func compare(userHand: Hand, computerHand: Hand) -> Result{
             let result = Result.compareHand(userHand, with: computerHand)
-            switch result {
-            case .draw:
-                print(Result.draw)
-                print("\(gameTurn) 승리!")
-            case .lose, .win:
-                print(result.description)
-                gameTurn = Turn.convert(gameTurn)
-                startSecondGame()
-            }
+            print(result.description)
+            return result
     }
     
-    mutating func startSecondGame() {
+    mutating func startSecondGame() -> Bool{
         guard let userHand = choiceUserHand() else {
-            print("게임 종료")
-            return
+            return false
         }
-        compare(userHand: userHand, computerHand: computerHand())
+        let result = compare(userHand: userHand, computerHand: computerHand())
+        switch result {
+        case .draw:
+            print("\(gameTurn) 승리!")
+            return true
+        case .lose:
+            gameTurn = Turn.convert(gameTurn)
+            return startSecondGame()
+        case .win:
+            return startSecondGame()
+        }
     }
 }
 
-var firstGame = RockScissorsPaper()
-let gameTurn = firstGame.startFirstGame()
-if let turn = gameTurn {
-    var secondGame = SecondGame()
-    secondGame.gameTurn = turn
-    secondGame.startSecondGame()
+
+let firstGame = RockScissorsPaper()
+var secondGame = SecondGame()
+
+while true {
+    guard let firstGameResult = firstGame.startFirstGame() else {
+        break
+    }
+    secondGame.gameTurn = firstGameResult
+    if !secondGame.startSecondGame() {
+        print("게임 종료")
+        break
+    }
 }
