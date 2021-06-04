@@ -6,67 +6,65 @@
 
 import Foundation
 
-enum Hand : Int, CaseIterable {
-    case scissors = 1
-    case rock = 2
-    case paper = 3
-}
-
-enum Result: CustomStringConvertible {
-    case win
-    case draw
-    case lose
-
-    var description: String {
-        switch self {
-        case .win:
-            return "이겼습니다!"
-        case .draw:
-            return "비겼습니다!"
-        case .lose:
-            return "졌습니다!"
-        }
-    }
-
-    static func compareHand(_ user: Hand, with computer: Hand) -> Result {
-        switch (user, computer) {
-        case let (x, y) where x == y:
-            return .draw
-        case (.scissors, let x):
-            return x == .rock ? .lose : .win
-        case (.rock, let x):
-            return x == .paper ? .lose : .win
-        case (.paper, let x):
-            return x == .scissors ? .lose : .win
-        }
-    }
-}
-
-enum Turn: CustomStringConvertible {
-    case userTurn
-    case computerTurn
-    
-    var description: String {
-        switch self {
-        case .userTurn:
-            return "사용자"
-        case .computerTurn:
-            return "컴퓨터"
-        }
-    }
-    
-    static func convert(_ turn: Turn) -> Turn {
-        if turn == .userTurn {
-            return .computerTurn
-        }
-        else {
-            return .userTurn
-        }
-    }
-}
-
 class RockScissorsPaper {
+    enum Hand : Int, CaseIterable {
+        case scissors = 1
+        case rock = 2
+        case paper = 3
+    }
+
+    enum Result: CustomStringConvertible {
+        case win
+        case draw
+        case lose
+
+        var description: String {
+            switch self {
+            case .win:
+                return "이겼습니다!"
+            case .draw:
+                return "비겼습니다!"
+            case .lose:
+                return "졌습니다!"
+            }
+        }
+        static func compareHand(_ user: Hand, with computer: Hand) -> Result {
+            switch (user, computer) {
+            case let (x, y) where x == y:
+                return .draw
+            case (.scissors, let x):
+                return x == .rock ? .lose : .win
+            case (.rock, let x):
+                return x == .paper ? .lose : .win
+            case (.paper, let x):
+                return x == .scissors ? .lose : .win
+            }
+        }
+    }
     
+    enum Turn: CustomStringConvertible {
+        case userTurn
+        case computerTurn
+        
+        var description: String {
+            switch self {
+            case .userTurn:
+                return "사용자"
+            case .computerTurn:
+                return "컴퓨터"
+            }
+        }
+        
+        static func convert(_ turn: Turn) -> Turn {
+            if turn == .userTurn {
+                return .computerTurn
+            }
+            else {
+                return .userTurn
+            }
+        }
+    }
+
     func choiceUserHand() -> Hand? {
         print("가위(1), 바위(2), 보(3)! <종료 : 0> :", terminator: " ")
         let userInputArray: [Int] = [0, 1, 2, 3]
@@ -87,25 +85,25 @@ class RockScissorsPaper {
     }
 
     func compare(userHand: Hand, computerHand: Hand) -> Result {
-        let result = Result.compareHand(userHand, with: computerHand)
-        print(result.description)
-        return result
+        let gameResult = Result.compareHand(userHand, with: computerHand)
+        return gameResult
     }
     
-    func startFirstGame() -> Turn? {
-        var firstResult: Result
+    func startRockScissorsPaper() -> Turn? {
+        var gameResult: Result
         repeat {
             guard let userHand = choiceUserHand() else {
                 print("게임 종료")
                 return nil
             }
-            firstResult = compare(userHand: userHand, computerHand: computerHand())
-        } while firstResult == Result.draw
-        return (firstResult == .win) ? Turn.userTurn : .computerTurn
+            gameResult = compare(userHand: userHand, computerHand: computerHand())
+            print(gameResult.description)
+        } while gameResult == Result.draw
+        return (gameResult == .win) ? Turn.userTurn : .computerTurn
     }
 }
 
-class SecondGame: RockScissorsPaper {
+class MukJjiPpa: RockScissorsPaper {
     var gameTurn: Turn = .userTurn
     
     override func choiceUserHand() -> Hand? {
@@ -128,34 +126,34 @@ class SecondGame: RockScissorsPaper {
         }
     }
     
-    func startSecondGame() -> Bool{
+    func startMukJjiPpa() -> Bool{
         guard let userHand = choiceUserHand() else {
             return false
         }
-        let result = compare(userHand: userHand, computerHand: computerHand())
-        switch result {
+        let gameResult = compare(userHand: userHand, computerHand: computerHand())
+        switch gameResult {
         case .draw:
             print("\(gameTurn) 승리!")
             return true
         case .lose:
             gameTurn = Turn.convert(gameTurn)
-            return startSecondGame()
+            fallthrough
         case .win:
-            return startSecondGame()
+            print("\(gameTurn)의 턴입니다")
+            return startMukJjiPpa()
         }
     }
 }
 
-
 let firstGame = RockScissorsPaper()
-var secondGame = SecondGame()
+var secondGame = MukJjiPpa()
 
 while true {
-    guard let firstGameResult = firstGame.startFirstGame() else {
+    guard let firstGameResult = firstGame.startRockScissorsPaper() else {
         break
     }
     secondGame.gameTurn = firstGameResult
-    if !secondGame.startSecondGame() {
+    if !secondGame.startMukJjiPpa() {
         print("게임 종료")
         break
     }
