@@ -65,9 +65,9 @@ enum Turn: CustomStringConvertible {
     }
 }
 
-struct RockScissorsPaper {
+class RockScissorsPaper {
     
-    private func choiceUserHand() -> Hand? {
+    func choiceUserHand() -> Hand? {
         print("가위(1), 바위(2), 보(3)! <종료 : 0> :", terminator: " ")
         let userInputArray: [Int] = [0, 1, 2, 3]
         guard let userInput = (readLine().flatMap{ Int($0) }), userInputArray.contains(userInput) else {
@@ -78,7 +78,7 @@ struct RockScissorsPaper {
         return Hand(rawValue: userInput)
     }
 
-    private func computerHand() -> Hand {
+    func computerHand() -> Hand {
         if let randomHand = Hand.allCases.randomElement() {
             return randomHand
         } else {
@@ -86,7 +86,7 @@ struct RockScissorsPaper {
         }
     }
 
-    private func compare(userHand: Hand, computerHand: Hand) -> Result {
+    func compare(userHand: Hand, computerHand: Hand) -> Result {
         let result = Result.compareHand(userHand, with: computerHand)
         print(result.description)
         return result
@@ -105,10 +105,10 @@ struct RockScissorsPaper {
     }
 }
 
-struct SecondGame {
+class SecondGame: RockScissorsPaper {
     var gameTurn: Turn = .userTurn
     
-    mutating func choiceUserHand() -> Hand? {
+    override func choiceUserHand() -> Hand? {
         print("[\(gameTurn)턴] 묵(1), 찌(2), 빠(3)! <종료 : 0> :", terminator: " ")
         let userInputArray: [Int] = [0, 1, 2, 3]
         guard let userInput = (readLine().flatMap{ Int($0) }), userInputArray.contains(userInput) else {
@@ -128,21 +128,7 @@ struct SecondGame {
         }
     }
     
-    func computerHand() -> Hand {
-        if let randomHand = Hand.allCases.randomElement() {
-            return randomHand
-        } else {
-            return computerHand()
-        }
-    }
-    
-    func compare(userHand: Hand, computerHand: Hand) -> Result{
-            let result = Result.compareHand(userHand, with: computerHand)
-            print(result.description)
-            return result
-    }
-    
-    mutating func startSecondGame() -> Bool{
+    func startSecondGame() -> Bool{
         guard let userHand = choiceUserHand() else {
             return false
         }
