@@ -69,7 +69,8 @@ class RockScissorsPaper {
     
     func choiceUserHand() -> Hand? {
         print("가위(1), 바위(2), 보(3)! <종료 : 0> :", terminator: " ")
-        guard let userInput = (readLine().flatMap{ Int($0) }), (0...3).contains(userInput) else {
+        guard let userInput = readLine().flatMap({ Int($0) }),
+                (0...3).contains(userInput) else {
             print(Message.invaild)
             return choiceUserHand()
         }
@@ -92,17 +93,20 @@ class RockScissorsPaper {
     
     func startGame() -> Turn? {
         var firstResult: Result
-        
-        repeat {
-            guard let userHand = choiceUserHand() else {
-                print(Message.end)
-                return nil
-            }
+        do {
+            repeat {
+                guard let userHand = choiceUserHand() else {
+                    print(Message.end)
+                    return nil
+                }
 
-            firstResult = try! compare(userHand: userHand, computerHand: generateComputerHand())
-            print(firstResult)
-        } while firstResult == Result.draw
-        
-        return (firstResult == .win) ? Turn.userTurn : .computerTurn
+                firstResult = try compare(userHand: userHand, computerHand: generateComputerHand())
+                print(firstResult)
+            } while firstResult == Result.draw
+            
+            return (firstResult == .win) ? Turn.userTurn : .computerTurn
+        } catch {
+            fatalError("열거형이 비어있어요")
+        }
     }
 }
