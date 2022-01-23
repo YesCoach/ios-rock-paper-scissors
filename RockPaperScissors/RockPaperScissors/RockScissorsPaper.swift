@@ -7,8 +7,7 @@
 import Foundation
 
 class RockScissorsPaper {
-    lazy var userInputArray: [Int] = [0, 1, 2, 3]
-    lazy var gameTurn = Turn.userTurn
+    var gameTurn = Turn.userTurn
     
     enum Hand : Int, CaseIterable {
         case scissors = 1
@@ -70,7 +69,7 @@ class RockScissorsPaper {
     
     func choiceUserHand() -> Hand? {
         print("가위(1), 바위(2), 보(3)! <종료 : 0> :", terminator: " ")
-        guard let userInput = (readLine().flatMap{ Int($0) }), userInputArray.contains(userInput) else {
+        guard let userInput = (readLine().flatMap{ Int($0) }), (0...3).contains(userInput) else {
             print(Message.invaild)
             return choiceUserHand()
         }
