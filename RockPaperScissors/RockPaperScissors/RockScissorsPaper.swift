@@ -74,7 +74,6 @@ class RockScissorsPaper {
             print(Message.invaild)
             return choiceUserHand()
         }
-        
         return Hand(rawValue: userInput)
     }
 
@@ -82,7 +81,7 @@ class RockScissorsPaper {
         guard let randomHand = Hand.allCases.randomElement() else {
             throw GameError.emptyCollection
         }
-        
+        print(randomHand)
         return randomHand
     }
     
@@ -92,19 +91,20 @@ class RockScissorsPaper {
     }
     
     func startGame() -> Turn? {
-        var firstResult: Result
         do {
+            var result: Result
             repeat {
                 guard let userHand = choiceUserHand() else {
                     print(Message.end)
                     return nil
                 }
+                print(userHand)
 
-                firstResult = try compare(userHand: userHand, computerHand: generateComputerHand())
-                print(firstResult)
-            } while firstResult == Result.draw
+                result = try compare(userHand: userHand, computerHand: generateComputerHand())
+                print(result)
+            } while result == Result.draw
             
-            return (firstResult == .win) ? Turn.userTurn : .computerTurn
+            return (result == .win) ? Turn.userTurn : .computerTurn
         } catch {
             fatalError("열거형이 비어있어요")
         }

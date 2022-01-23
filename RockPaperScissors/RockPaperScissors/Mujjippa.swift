@@ -10,10 +10,9 @@ import Foundation
 final class Mukjjippa: RockScissorsPaper {
     override func choiceUserHand() -> Hand? {
         print("[\(gameTurn)턴] 묵(1), 찌(2), 빠(3)! <종료 : 0> :", terminator: " ")
-        guard let userInput = (readLine().flatMap{ Int($0) }),
+        guard let userInput = readLine().flatMap({ Int($0) }),
                 (0...3).contains(userInput) else {
             print(Message.invaild)
-            gameTurn = Turn.convert(gameTurn)
             return choiceUserHand()
         }
         
@@ -42,10 +41,15 @@ final class Mukjjippa: RockScissorsPaper {
                 print("\(gameTurn) 승리!")
                 return true
             case .lose:
-                gameTurn = Turn.convert(gameTurn)
+                if gameTurn == Turn.userTurn {
+                    gameTurn = Turn.convert(gameTurn)
+                }
                 print("\(gameTurn)의 턴입니다.")
                 return startGame()
             case .win:
+                if gameTurn == Turn.computerTurn {
+                    gameTurn = Turn.convert(gameTurn)
+                }
                 print("\(gameTurn)의 턴입니다.")
                 return startGame()
             }

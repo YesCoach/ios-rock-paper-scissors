@@ -14,7 +14,7 @@ while true {
         break
     }
     
-    rockScissorsPaper.gameTurn = rockPaperScissorsResult
+    mujjippa.gameTurn = rockPaperScissorsResult
     
     if !mujjippa.startGame() {
         print(Message.end)
